@@ -16,3 +16,11 @@ variable "aws_profile" {
   type    = string
   default = "terraform"
 }
+
+variable "short_c2_forward_domain" {
+  type = string
+}
+
+variable "short_c2_redirect_path" {
+  type = string
+}

@@ -11,10 +11,10 @@ server {
     client_max_body_size 2M;
 
     location ^~ / {
-        proxy_pass http://example.com;
+        proxy_pass {{forward_domain}};
     }
 
-    location ^~ /assets/en-gb/ {
+    location ^~ {{redirect_path}} {
         proxy_pass http://{{c2_server_ip}};
     }
 }
