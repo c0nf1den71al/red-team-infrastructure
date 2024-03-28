@@ -24,6 +24,18 @@
       ansible.builtin.pause:
         seconds: 60
 
+    - name: Enabling nginx module
+      command: filebeat modules enable nginx
+      when: inventory_hostname in groups["nginx"]
+
+    - name: Configuring nginx module
+      lineinfile:
+        path: /etc/filebeat/modules.d/nginx.yml
+        regexp: "^enabled: false"
+        line: "enabled: true"
+        firstmatch: true
+      when: inventory_hostname in groups["nginx"]
+
     - name: Setup Filebeat (may take a while)
       command: filebeat setup
       run_once: true

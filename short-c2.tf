@@ -8,7 +8,7 @@ resource "aws_instance" "short_c2" {
   key_name                    = "ansible"
 
   tags = {
-    Name = "VPN"
+    Name = "Short C2"
   }
 }
 

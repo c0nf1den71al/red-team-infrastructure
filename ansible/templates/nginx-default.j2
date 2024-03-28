@@ -1,0 +1,20 @@
+server {
+    listen 80 default_server;
+
+    # SSL Settings
+    # listen 443 ssl;
+    # ssl_certificate /etc/letsencrypt/live/${redirector_domain}/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/${redirector_domain}/privkey.pem;
+
+    server_name {{public_ip}};
+    keepalive_timeout 70;
+    client_max_body_size 2M;
+
+    location ^~ / {
+        proxy_pass http://example.com;
+    }
+
+    location ^~ /assets/en-gb/ {
+        proxy_pass http://{{c2_server_ip}};
+    }
+}

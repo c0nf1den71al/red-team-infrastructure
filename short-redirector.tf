@@ -8,7 +8,7 @@ resource "aws_instance" "short_redirector" {
   key_name                    = "ansible"
 
   tags = {
-    Name = "VPN"
+    Name = "Short C2 Redirector"
   }
 }
 
@@ -31,7 +31,7 @@ resource "aws_security_group" "short_redirector" {
   ingress = [
     {
       cidr_blocks      = [aws_subnet.public_subnet.cidr_block, aws_subnet.private_subnet.cidr_block, ]
-      description      = "Allow inboud from hosts within the VPC"
+      description      = "Allow inbound from hosts within the VPC"
       from_port        = 0
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
@@ -71,6 +71,8 @@ resource "ansible_host" "short_redirector" {
   groups = ["nginx"]
   variables = {
     ansible_ssh_common_args = "-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ./keys/ansible ubuntu@${aws_instance.vpn.public_ip}'",
-    hostname                = "short-c2-redirector"
+    hostname                = "short-c2-redirector",
+    public_ip               = aws_instance.short_redirector.public_ip,
+    c2_server_ip            = aws_instance.short_c2.private_ip
   }
 }

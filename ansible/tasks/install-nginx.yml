@@ -11,3 +11,13 @@
           - certbot
         state: latest
         update_cache: true
+
+    - name: Configuring nginx
+      ansible.builtin.template:
+        src: ../templates/nginx-default.j2
+        dest: /etc/nginx/sites-enabled/default
+
+    - name: Restarting nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
