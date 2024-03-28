@@ -3,6 +3,7 @@
 1. Create SSH keys for Ansible:
 
 ```sh
+mkdir keys
 ssh-keygen -f ./keys/ansible
 ```
 
