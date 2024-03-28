@@ -17,7 +17,7 @@ terraform {
 
 # If you get an error about profile, make sure AWS CLI is installed and configured
 provider "aws" {
-  profile = "terraform"
+  profile = var.aws_profile
   region  = "us-east-2"
 }
 
