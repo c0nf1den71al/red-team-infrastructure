@@ -36,7 +36,13 @@ terraform init
 terraform apply
 ```
 
-6. Run Ansible
+6. View final config and credentials:
+
+```sh
+terraform output -raw table | less
+```
+
+7. Run Ansible
 
 ```sh
 ansible-playbook -i inventory.yml -u ubuntu ansible/main.yml
