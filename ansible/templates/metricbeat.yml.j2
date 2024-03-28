@@ -1,0 +1,43 @@
+###################### Metricbeat Configuration #######################
+
+# =========================== Modules configuration ============================
+
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# ======================= Elasticsearch template setting =======================
+
+setup.template.settings:
+  index.number_of_shards: 1
+  index.codec: best_compression
+
+# =================================== Kibana ===================================
+
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+setup.kibana:
+
+  # Kibana Host
+  host: "{{elk_host}}:5601"
+  username: "elastic"
+  password: "{{elastic_password}}"
+
+# ================================== Outputs ===================================
+
+# Configure what output to use when sending the data collected by the beat.
+
+# ---------------------------- Elasticsearch Output ----------------------------
+output.elasticsearch:
+  hosts: ["{{elk_host}}:9200"]
+  preset: balanced
+  username: "metricbeat_internal"
+  password: "{{metricbeat_password}}"
+
+# ================================= Processors =================================
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~

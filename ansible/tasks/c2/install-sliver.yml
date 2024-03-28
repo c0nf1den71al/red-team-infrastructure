@@ -1,0 +1,56 @@
+---
+- name: Sliver install
+  hosts: sliver
+  become: true
+
+  tasks:
+    - name: Downloading Metasploit
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb
+        dest: /opt/msfinstall
+        mode: "0755"
+
+    - name: Installing Metasploit
+      command: /opt/msfinstall
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Downloading Sliver script
+      ansible.builtin.get_url:
+        url: https://sliver.sh/install
+        dest: /opt/install-sliver
+        mode: "0755"
+
+    - name: Installing Sliver
+      command: /opt/install-sliver
+
+    - name: Enable sliver service
+      ansible.builtin.systemd_service:
+        name: sliver
+        enabled: true
+
+    - name: Creating profile directory
+      ansible.builtin.file:
+        path: /home/ubuntu/sliver-profiles
+        state: directory
+
+    - name: Generating sliver users
+      command: /root/sliver-server operator --name {{item}} --lhost {{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}} --save /home/ubuntu/sliver-profiles/sliver-{{item}}-profile.cfg
+      loop:
+        - operator-1
+        - operator-2
+        - operator-3
+        - operator-4
+        - operator-5
+
+    - name: Storing in a path relative to the playbook
+      ansible.builtin.fetch:
+        src: /home/ubuntu/sliver-profiles/sliver-{{item}}-profile.cfg
+        dest: ../../../output/sliver-profiles/
+        flat: yes
+      loop:
+        - operator-1
+        - operator-2
+        - operator-3
+        - operator-4
+        - operator-5

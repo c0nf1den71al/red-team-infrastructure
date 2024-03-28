@@ -1,0 +1,28 @@
+---
+- name: Metricbeat install
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Installing Metricbeat
+      apt:
+        deb: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-8.13.0-amd64.deb
+
+    - name: Configuring Metricbeat
+      ansible.builtin.template:
+        src: ../../templates/metricbeat.yml.j2
+        dest: /etc/metricbeat/metricbeat.yml
+
+    - name: Setup Metricbeat (may take a while)
+      command: metricbeat setup
+      run_once: true
+
+    - name: Enabling Metricbeat service
+      ansible.builtin.systemd_service:
+        name: metricbeat
+        enabled: true
+
+    - name: Start Metricbeat Service
+      service:
+        name: metricbeat
+        state: started

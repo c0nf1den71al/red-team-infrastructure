@@ -1,0 +1,39 @@
+---
+- name: Filebeat install
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+        state: latest
+        update_cache: true
+
+    - name: Installing filebeat
+      apt:
+        deb: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.13.0-amd64.deb
+
+    - name: Configuring filebeat
+      ansible.builtin.template:
+        src: ../../templates/filebeat.yml.j2
+        dest: /etc/filebeat/filebeat.yml
+
+    - name: Waiting for elk to start
+      ansible.builtin.pause:
+        seconds: 60
+
+    - name: Setup Filebeat (may take a while)
+      command: filebeat setup
+      run_once: true
+
+    - name: Enabling Filebeat service
+      ansible.builtin.systemd_service:
+        name: filebeat
+        enabled: true
+
+    - name: Start Filebeat Service
+      service:
+        name: filebeat
+        state: started

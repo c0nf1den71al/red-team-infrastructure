@@ -1,0 +1,33 @@
+---
+- name: Configure servers
+  hosts: all
+
+  tasks:
+    - name: Set a hostname
+      become: true
+      ansible.builtin.hostname:
+        name: "{{hostname}}"
+
+    - name: Update packages and install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+# - name: Install docker
+#   import_playbook: tasks/install-docker.yml
+
+- name: Configure VPN
+  import_playbook: tasks/install-tailscale.yml
+
+# - name: Configure ELK stack
+#   import_playbook: tasks/install-elk.yml
+
+# - name: Configure Filebeat
+#   import_playbook: tasks/beats/install-filebeat.yml
+
+# - name: Configure Metricbeat
+#   import_playbook: tasks/beats/install-metricbeat.yml
+
+- name: Configure Sliver
+  import_playbook: tasks/c2/install-sliver.yml

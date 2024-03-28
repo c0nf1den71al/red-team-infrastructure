@@ -1,0 +1,51 @@
+---
+- name: ELK stack install
+  hosts: elk
+  become: true
+
+  tasks:
+    - name: Clone docker-elk repository
+      git:
+        repo: https://github.com/deviantony/docker-elk
+        dest: /opt/docker-elk
+
+    - name: Configuring Elastic password
+      lineinfile:
+        path: /opt/docker-elk/.env
+        regexp: "^ELASTIC_PASSWORD="
+        line: "ELASTIC_PASSWORD='{{ elastic_password }}'"
+
+    - name: Configuring Logstash password
+      lineinfile:
+        path: /opt/docker-elk/.env
+        regexp: "^LOGSTASH_INTERNAL_PASSWORD="
+        line: "LOGSTASH_INTERNAL_PASSWORD='{{ logstash_password }}'"
+
+    - name: Configuring Kibana password
+      lineinfile:
+        path: /opt/docker-elk/.env
+        regexp: "^KIBANA_SYSTEM_PASSWORD="
+        line: "KIBANA_SYSTEM_PASSWORD='{{ kibana_password }}'"
+
+    - name: Configuring Metricbeat password
+      lineinfile:
+        path: /opt/docker-elk/.env
+        regexp: "^METRICBEAT_INTERNAL_PASSWORD="
+        line: "METRICBEAT_INTERNAL_PASSWORD='{{ metricbeat_password }}'"
+
+    - name: Configuring Filebeat password
+      lineinfile:
+        path: /opt/docker-elk/.env
+        regexp: "^FILEBEAT_INTERNAL_PASSWORD="
+        line: "FILEBEAT_INTERNAL_PASSWORD='{{ filebeat_password }}'"
+
+    - name: Configuring ELK
+      docker_compose:
+        project_src: /opt/docker-elk
+        build: yes
+        debug: yes
+        services: setup
+
+    - name: Running ELK
+      docker_compose:
+        project_src: /opt/docker-elk

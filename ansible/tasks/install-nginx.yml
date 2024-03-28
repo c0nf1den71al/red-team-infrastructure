@@ -1,0 +1,13 @@
+---
+- name: Nginx install
+  hosts: nginx
+  become: true
+
+  tasks:
+    - name: Install required system packages
+      apt:
+        pkg:
+          - nginx
+          - certbot
+        state: latest
+        update_cache: true

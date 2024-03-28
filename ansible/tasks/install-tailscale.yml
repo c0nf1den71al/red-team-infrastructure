@@ -1,0 +1,33 @@
+---
+- name: Installing Tailscale
+  hosts: vpn
+  become: true
+
+  tasks:
+    - name: Install required system packages
+      apt:
+        pkg:
+          - curl
+        state: latest
+        update_cache: true
+
+    - name: Downloading and installing Tailscale
+      shell: |
+        curl -fsSL https://tailscale.com/install.sh -o /tmp/install-tailscale.sh
+        sh /tmp/install-tailscale.sh
+
+    - name: Configuring sysctl
+      sysctl:
+        name: "{{ item }}"
+        value: "{{ sysctl_configs[item] }}"
+        state: present
+      loop:
+        - net.ipv4.ip_forward
+        - net.ipv6.conf.all.forwarding
+      vars:
+        sysctl_configs:
+          net.ipv4.ip_forward: 1
+          net.ipv6.conf.all.forwarding: 1
+
+    - name: Starting Tailscale
+      command: "tailscale up --authkey {{ tailscale_auth_key }} --advertise-routes {{ private_subnet }}"
