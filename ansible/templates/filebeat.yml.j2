@@ -10,7 +10,9 @@ filebeat.inputs:
   enabled: true
   paths:
     - /var/log/*.log
-
+{% if inventory_hostname in groups["sliver"] %}
+    - /root/.sliver/logs/*.log
+{% endif %}
 # ============================== Filebeat modules ==============================
 
 filebeat.config.modules:
