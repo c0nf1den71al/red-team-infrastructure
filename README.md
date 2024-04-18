@@ -15,24 +15,7 @@ ssh-keygen -f ./keys/ansible
 ansible-galaxy collection install cloud.terraform
 ```
 
-4. Create `terraform.tfvars` and insert vars. For example:
-
-```
-# AWS Configuration
-aws_profile = "terraform"
-
-# Ansible SSH keys
-ansible_public_key  = "keys/ansible.pub"
-ansible_private_key = "./keys/ansible"
-
-# Tailscale Auth Key for VPN
-tailscale_auth_key = "tskey-auth-xxxxxxxxxx-xxxxxxxxxxxxxxxxxxx"
-
-# Short C2 Configuration
-short_c2_forward_domain = "http://example.com"
-short_c2_redirect_path  = "/assets/en-gb/"
-
-```
+4. Create `terraform.tfvars` and insert vars from `terraform.tfvars.example`.
 
 5. Spin up infrastructure
 
