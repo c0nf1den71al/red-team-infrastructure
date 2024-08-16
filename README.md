@@ -12,7 +12,7 @@
     <a href="#"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="#">Network Diagram</a>
+    <a href="#">Quick Start</a>
     ·
     <a href="https://github.com/c0nf1den71al/red-team-infrastructure/issues">Report Bug</a>
     ·
@@ -68,7 +68,7 @@ This section lists any major frameworks/libraries used to make this project happ
 * Terraform
 * Ansible
 * Tailscale
-* Elastic 
+* Elastic
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

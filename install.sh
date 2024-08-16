@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# ansible-galaxy collection install cloud.terraform
+# This script should ask users what they would like to use for C2 servers etc...
+ansible-galaxy collection install cloud.terraform
 terraform init
 terraform apply
 terraform output -raw table | less

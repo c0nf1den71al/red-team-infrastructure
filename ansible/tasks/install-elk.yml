@@ -8,6 +8,7 @@
       git:
         repo: https://github.com/deviantony/docker-elk
         dest: /opt/docker-elk
+        force: true
 
     - name: Configuring Elastic password
       lineinfile:
@@ -39,13 +40,12 @@
         regexp: "^FILEBEAT_INTERNAL_PASSWORD="
         line: "FILEBEAT_INTERNAL_PASSWORD='{{ filebeat_password }}'"
 
-    - name: Configuring ELK
-      docker_compose:
+    - name: Building ELK
+      community.docker.docker_compose_v2:
         project_src: /opt/docker-elk
-        build: yes
-        debug: yes
+        build: always
         services: setup
 
     - name: Running ELK
-      docker_compose:
+      community.docker.docker_compose_v2:
         project_src: /opt/docker-elk
