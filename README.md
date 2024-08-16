@@ -12,7 +12,7 @@
     <a href="#"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="#">Quick Start</a>
+    <a href="#getting-started">Quick Start</a>
     ·
     <a href="https://github.com/c0nf1den71al/red-team-infrastructure/issues">Report Bug</a>
     ·
@@ -52,10 +52,12 @@
 ## About The Project
 ![Network Diagram](/network-diagram.png)
 
-Todo
+This repo aims to be a quick and easy way to spin up red team infrastucture. Whilst currently a work in progress, this project strives to provide a fully customisable, automated, approach to create infrastucture for red team engagements.
 
-Todo
-
+The base infrastructure includes the following: 
+* VPN "jump box" exposing the internal subnet over [Tailscale](https://tailscale.com/).
+* Short and long term C2 servers exposed over several (customisable) redirectors.
+* [ELK](https://www.elastic.co/elastic-stack/) server providing full logging and metrics for the environment. 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -64,20 +66,21 @@ Todo
 
 This section lists any major frameworks/libraries used to make this project happen:
 
-* AWS
-* Terraform
-* Ansible
-* Tailscale
-* Elastic
+* [AWS](https://aws.amazon.com)
+* [Terraform](https://www.terraform.io)
+* [Ansible](https://www.ansible.com)
+* [Tailscale](https://tailscale.com)
+* [Elastic](https://www.elastic.co/elastic-stack/)
+* [Nginx](https://nginx.org/en/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
+<a name="getting-started"></a>
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Todo
+Note that the `install.sh` script is currently a work in progress, therefore, follow the steps below to get started. 
 
 ### Prerequisites
 1. Create SSH keys for Ansible:
@@ -87,7 +90,7 @@ mkdir keys
 ssh-keygen -f ./keys/ansible
 ```
 
-2. Install ansible and initialise AWS CLI
+2. Install [Ansible](https://www.ansible.com) and initialise [AWS CLI](https://aws.amazon.com/cli/)
 
 3. Install required ansible plugins:
 
@@ -96,9 +99,9 @@ ansible-galaxy collection install cloud.terraform
 ```
 
 ### Installation
-1. Create `terraform.tfvars` and insert vars from `terraform.tfvars.example`.
+1. Create `terraform.tfvars` using `terraform.tfvars.example` as an example.
 
-2. Spin up infrastructure
+2. Spin up infrastructure with the following terraform commands
 
 ```sh
 terraform init
@@ -114,7 +117,6 @@ ansible-playbook -i inventory.yml -u ubuntu ansible/main.yml
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -124,16 +126,15 @@ View final config and credentials:
 terraform output -raw table
 ```
 
-Todo
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Documentation
+- [ ] Full Documentation
+- [ ] Add more C2 Server
+- [ ] Install script
 
 See the [open issues](https://github.com/c0nf1den71al/red-team-infrastructure/issues) for a full list of proposed features (and known issues).
 
