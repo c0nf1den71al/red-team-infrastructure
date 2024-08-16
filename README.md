@@ -50,7 +50,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-![Network Diagram](#)
+![Network Diagram](/network-diagram.png)
 
 Todo
 

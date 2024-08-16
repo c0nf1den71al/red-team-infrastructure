@@ -36,15 +36,6 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-resource "aws_subnet" "nat_gateway_subnet" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "192.168.3.0/24"
-
-  tags = {
-    Name = "NAT Gateway Subnet"
-  }
-}
-
 # NAT Gateway
 resource "aws_eip" "nat_gateway_eip" {
   domain = "vpc"
@@ -52,7 +43,7 @@ resource "aws_eip" "nat_gateway_eip" {
 
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.nat_gateway_eip.id
-  subnet_id     = aws_subnet.nat_gateway_subnet.id
+  subnet_id     = aws_subnet.public_subnet.id
   depends_on    = [aws_internet_gateway.internet_gateway]
 
   tags = {
@@ -77,12 +68,6 @@ resource "aws_route_table" "nat_gateway" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat_gateway.id
   }
-}
-
-# Route the NAT gateway subnet to the internet
-resource "aws_route_table_association" "nat_gateway" {
-  subnet_id      = aws_subnet.nat_gateway_subnet.id
-  route_table_id = aws_route_table.internet.id
 }
 
 # Route public subnet to the internet
