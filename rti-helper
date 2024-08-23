@@ -1,0 +1,172 @@
+#!/bin/bash
+
+### Colours ###
+col_reset=$(tput sgr0)
+col_green=$(tput setaf 46)
+col_red=$(tput setaf 124)
+
+### Check if requirements are installed ###
+command -v aws &> /dev/null
+if [ $? -eq 1 ]; then
+    echo "${col_red}AWS CLI could not be found. Exiting...${col_reset}"
+    exit
+fi
+
+command -v terraform &> /dev/null
+if [ $? -eq 1 ]; then
+    echo "${col_red}Terraform CLI could not be found. Exiting...${col_reset}"
+    exit
+fi
+
+command -v ansible &> /dev/null
+if [ $? -eq 1 ]; then
+    echo "${col_red}Ansible could not be found. Exiting...${col_reset}"
+    exit
+fi
+
+command -v ansible-galaxy &> /dev/null
+if [ $? -eq 1 ]; then
+    echo "${col_red}Ansible galaxy could not be found. Exiting...${col_reset}"
+    exit
+fi
+
+### Ascii art ###
+base64 -d <<<"CiAgICAgICAgICAgICMjIyMjIyMjIyMKICAgICAgICAgICAgIyMgICAgICAjIwogICAgICAgICAgICAjIyAgICAgICMjICAgUmVkCiAgICAjIyMjIyMjIyMjIyMjIyMjIyMgICBUZWFtCiAgICAjIyAgICAgICMjICAgICAgICAgICBJbmZyYXN0dWN0dXJlCiAgICAjIyAgICAgICMjCiAgICAjIyMjIyMjIyMjCiAgICA="
+
+### Debug mode // Uninstall ###
+if [ -z "$1" ]; then
+    DEBUG=false
+elif [ $1 = "--verbose" ] || [ $1 = "-v" ]; then
+    DEBUG=true
+elif [ $1 = "--destroy" ] || [ $1 = "-d" ]; then
+    terraform destroy --auto-approve
+    rm -r $(pwd)/keys
+    exit 0
+else
+    echo """
+Usage
+    rti-helper [options]
+
+Options:
+    -v, --verbose       Verbose output, useful for debuging
+    -d, --destroy       Destroy all red team infrastructure
+"""
+    exit 0
+fi
+
+### Spinner animation ###
+function spinner {
+    local pid=$!
+    local delay=0.25
+    local instruction=$1
+    local spinstr='|/-\'
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf "[%c] %s " "$spinstr" "$instruction"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+	    for i in $(seq 1 $(expr ${#instruction} + 5)); do printf "\b"; done
+    done
+    for i in $(seq 1 $(expr ${#instruction} + 5)); do printf "\b"; done
+    printf "[✔] %s\n" "${col_green}$2${col_reset}"
+}
+
+echo ""
+
+# This script should ask users what they would like to use for C2 servers etc...
+
+### Generate SSH keys ###
+# Create SSH key password
+RTI_SSH_KEY_PWD=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c 32)
+
+function ssh_keys {
+    rm -r $(pwd)/keys # Remove old key
+    mkdir -p $(pwd)/keys
+    ssh-keygen -t ed25519 -f $(pwd)/keys/ansible -N "$RTI_SSH_KEY_PWD"
+}
+
+if [ $DEBUG = true ]; then
+    ssh_keys
+else
+    ssh_keys &> /dev/null &
+    spinner "Creating SSH keys..." "SSH keys successfully generated."
+fi
+
+### Start SSH agent ###
+# Create SSH key password
+
+function ssh_agent {
+    eval "$(ssh-agent -s)"
+
+    expect << EOF
+spawn ssh-add ./keys/ansible
+expect "Enter passphrase"
+send "$RTI_SSH_KEY_PWD\r"
+expect eof
+EOF
+}
+
+if [ $DEBUG = true ]; then
+    ssh_agent
+else
+    ssh_agent &> /dev/null &
+    spinner "Starting SSH Agent..." "SSH agent successfully started."
+fi
+
+
+### Install ansible collections ###
+function ansible_collection {
+    ansible-galaxy collection install cloud.terraform
+}
+
+if [ $DEBUG = true ]; then
+    ansible_collection
+else
+    ansible_collection &> /dev/null &
+    spinner "Installing required Ansible collections..." "Ansible collections successfully installed."
+fi
+
+
+### Initialise Terraform ###
+function terraform_init {
+    terraform init
+}
+
+if [ $DEBUG = true ]; then
+    terraform_init
+else
+    terraform_init &> /dev/null &
+    spinner "Initialising Terraform..." "Terraform successfully initialised."
+fi
+
+
+### Create Infrastructure ###
+function terraform_apply {
+    terraform apply -auto-approve
+}
+
+if [ $DEBUG = true ]; then
+    terraform_apply
+else
+    terraform_apply &> /dev/null &
+    spinner "Creating infrastructure..." "Infrastructure successfully created."
+fi
+
+### Ansible playbooks ###
+function ansible_playbook {
+    ansible-playbook -i inventory.yml -u ubuntu ansible/main.yml
+}
+
+if [ $DEBUG = true ]; then
+    ansible_playbook
+else
+    ansible_playbook &> /dev/null &
+    spinner "Running Ansible playbooks (this will take a while)..." "Ansible playbooks successfully executed."
+fi
+
+terraform output -raw table
+
+
+### Cleanup - Leave at bottom ###
+RTI_SSH_KEY_PWD=
+kill $SSH_AGENT_PID

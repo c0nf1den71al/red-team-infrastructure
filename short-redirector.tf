@@ -70,8 +70,9 @@ resource "ansible_host" "short_redirector" {
   name   = aws_instance.short_redirector.private_ip
   groups = ["nginx"]
   variables = {
-    ansible_ssh_common_args = "-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ./keys/ansible ubuntu@${aws_instance.vpn.public_ip}'",
+    ansible_ssh_common_args = "-o ProxyJump=ubuntu@${aws_instance.vpn.public_ip} -o ForwardAgent=yes",
     hostname                = "short-c2-redirector",
+    ansible_user            = "ubuntu"
     public_ip               = aws_instance.short_redirector.public_ip,
     c2_server_ip            = aws_instance.short_c2.private_ip,
     forward_domain          = var.short_c2_forward_domain,

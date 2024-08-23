@@ -48,7 +48,8 @@ resource "ansible_host" "short_c2" {
   name   = aws_instance.short_c2.private_ip
   groups = ["sliver"] # TODO: Make this a variable
   variables = {
-    ansible_ssh_common_args = "-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ./keys/ansible ubuntu@${aws_instance.vpn.public_ip}'",
+    ansible_ssh_common_args = "-o ProxyJump=ubuntu@${aws_instance.vpn.public_ip} -o ForwardAgent=yes",
+    ansible_user            = "ubuntu"
     hostname                = "short-c2-server"
   }
 }

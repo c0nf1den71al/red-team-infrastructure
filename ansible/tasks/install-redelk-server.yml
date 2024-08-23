@@ -1,0 +1,15 @@
+# ---
+# - name: RedELK server install
+#   hosts: elk
+#   become: true
+
+#   tasks:
+#     - name: Downloading Latest RedElk to /tmp
+#       shell: curl -s https://api.github.com/repos/outflanknl/redelk/releases/latest | grep tarball_url | cut -d'"' -f4 | wget -O /tmp/redelk_latest.tgz -qi -
+#       args:
+#         warn: false
+
+#     - name: Extracting
+#       shell: mkdir -p /tmp/redelk_latest && tar -zxvf /tmp/redelk_latest.tgz -C /tmp/redelk_latest --strip-components=1
+#       args:
+#         warn: false

@@ -75,7 +75,8 @@ resource "ansible_host" "elk" {
   name   = aws_instance.elk.private_ip
   groups = ["docker", "elk"]
   variables = {
-    ansible_ssh_common_args = "-o StrictHostKeyChecking=no -o ProxyCommand='ssh -W %h:%p -i ./keys/ansible ubuntu@${aws_instance.vpn.public_ip}'",
+    ansible_ssh_common_args = "-o ProxyJump=ubuntu@${aws_instance.vpn.public_ip} -o ForwardAgent=yes",
     hostname                = "elk-stack-server"
+    ansible_user            = "ubuntu"
   }
 }

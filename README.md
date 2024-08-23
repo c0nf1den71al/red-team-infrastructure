@@ -54,10 +54,10 @@
 
 This repo aims to be a quick and easy way to spin up red team infrastucture. Whilst currently a work in progress, this project strives to provide a fully customisable, automated, approach to create infrastucture for red team engagements.
 
-The base infrastructure includes the following: 
+The base infrastructure includes the following:
 * VPN "jump box" exposing the internal subnet over [Tailscale](https://tailscale.com/).
 * Short and long term C2 servers exposed over several (customisable) redirectors.
-* [ELK](https://www.elastic.co/elastic-stack/) server providing full logging and metrics for the environment. 
+* [ELK](https://www.elastic.co/elastic-stack/) server providing full logging and metrics for the environment.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -80,7 +80,7 @@ This section lists any major frameworks/libraries used to make this project happ
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Note that the `install.sh` script is currently a work in progress, therefore, follow the steps below to get started. 
+Simply run the `rti-helper` script and follow the steps to create your infrastucture. Looking to manually create the infrastructure? Follow the steps below to get started.
 
 ### Prerequisites
 1. Create SSH keys for Ansible:

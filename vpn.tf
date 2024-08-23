@@ -60,9 +60,9 @@ resource "ansible_host" "vpn" {
   name   = aws_instance.vpn.public_ip
   groups = ["vpn"]
   variables = {
-    ansible_ssh_common_args = "-o StrictHostKeyChecking=no",
     private_subnet          = aws_subnet.private_subnet.cidr_block,
     tailscale_auth_key      = var.tailscale_auth_key,
+    ansible_user            = "ubuntu"
     hostname                = "vpn-server"
   }
 }
